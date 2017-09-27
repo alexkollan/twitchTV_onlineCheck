@@ -1,0 +1,27 @@
+body{
+    background-color: #241A24;
+}
+#goToBtn{
+    cursor: pointer;
+}
+
+.logo{
+    width:19.8em;
+    height: 15em;
+
+}
+
+/* .mycontainer{
+    max-width: 1200px;
+} */
+
+.responseBox{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+
+.streams{
+    background: #210D35;
+    color: white;
+}
