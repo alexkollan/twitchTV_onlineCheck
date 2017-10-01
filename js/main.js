@@ -7,7 +7,7 @@ var pre_streams = ["ESL_SC2", "OgamingSC2", "trick2g", "freecodecamp", "storbeck
 var isOnline;
 var noLogo = 'https://www.twitch.tv/p/assets/uploads/glitch_notcomboone_474x356.png';
 
-$('#srchBtn').on('click',takeInput);
+
 $(document).on('keypress',function(e) {
     if(e.which == 13) {
         takeInput();
@@ -57,7 +57,12 @@ function fetchDataChannel(streamer){
         console.log(response.status);
         response.json().then(function(data){
             console.log(data);
-            drawResultC(data.profile_banner, data.display_name, data.status, data.updated_at, data.url);
+            if(data.error){
+                alert('Unable to find that stream.')
+            }else{
+                drawResultC(data.profile_banner, data.display_name, data.status, data.updated_at, data.url);
+                
+            }
 
         }).catch(function(err){
             console.log(err);
@@ -67,9 +72,9 @@ function fetchDataChannel(streamer){
 }
 function drawResult(preview,name,status,playing,viewers,fps,channelURL){
 
-    $('.responseBox').append(
+    $('.responseBox').prepend(
         `
-        <div class="card streams" style="width: 20rem;">
+        <div id="${name}" class="card streams" style="width: 20rem;">
         <img class="card-img-top logo" src="${preview}" alt="Card image cap">
         <div class="card-block">
           <h4 class="card-title">${name}</h4>
@@ -80,7 +85,11 @@ function drawResult(preview,name,status,playing,viewers,fps,channelURL){
           <br>FPS: ${fps}
           <p>Status ${isOnline}</p
           </p>
-          <a href="${channelURL}" target="_blank"><div id="goToBtn" class="btn btn-primary">Go to Channel</div></a>
+          <div class="btn-group" role="group" aria-label="Basic example">
+          <a href="${channelURL}" target="_blank"><button type="button" class="btn btn-primary">Go to Channel</button></a>
+          <button type="button" id="savebtn" onclick="save('${name}')" class="btn btn-success">Save</button>
+          <button type="button" id="deletebtn" onclick="deleteSaved('${name}')" class="btn btn-danger">Delete</button>
+        </div>
         </div>
       </div>
         `
@@ -97,17 +106,22 @@ function drawResultC(banner,name,status,statusUpdateDate,channelURL){
     }else{
         image = banner;
     }
-        $('.responseBox').append(
+        $('.responseBox').prepend(
             `
-            <div class="card streams" style="width: 20rem;">
+            <div id="${name}" class="card streams" style="width: 20rem;">
             <img class="card-img-top logo" src="${image}" alt="Card image cap">
             <div class="card-block">
               <h4 class="card-title">${name} </h4> 
               <p class="card-text">
               <i>is Offline</i>
               </p>
-              <a href="${channelURL}" target="_blank"><div id="goToBtn" class="btn btn-primary">Go to Channel</div></a>
+              <br><br><br><br>
+              <div class="btn-group" role="group" aria-label="Basic example">
+              <a href="${channelURL}" target="_blank"><button type="button" class="btn btn-primary">Go to Channel</button></a>
+              <button type="button" id="savebtn" onclick="save('${name}')" class="btn btn-success">Save</button>
+              <button type="button" id="deletebtn" onclick="deleteSaved('${name}')" class="btn btn-danger">Delete</button>
             </div>
+              </div>
           </div>
             `
         )
@@ -116,17 +130,58 @@ function drawResultC(banner,name,status,statusUpdateDate,channelURL){
         })
     }
 
-function takeInput(){
-    var name = $('#streamer').val();
-    console.log(name);
-    // if (name == '') {
-    //     alert(`Please don't leave me empty... :(`)
-    // } else {
-        pre_streams.forEach(function(name){
+    function takeInput(){
+        var input = $('#streamer').val();
+        console.log('clicked');
+        fetchDataStream(input);
+    }
+function save(name){
+    console.log('saved');
+        let savedStreams = [];
+        savedStreams = JSON.parse(localStorage.getItem('saved'));
+        savedStreams.push(name);
+        console.log(savedStreams);
+        localStorage.setItem('saved', JSON.stringify(savedStreams));
+}
+
+function deleteSaved(name){
+    let savedStreams = [];
+    savedStreams = JSON.parse(localStorage.getItem('saved'));
+    for(let i = 0; i<savedStreams.length; i++){
+        if(savedStreams[i] === name){
+            savedStreams.splice(i, 1);
+            localStorage.setItem('saved', JSON.stringify(savedStreams));
+            deleteElement(name);
+        }
+    }
+}
+
+function deleteElement(element){
+    console.log(element + ' from delete function');
+    $('#'+element).remove();
+}
+
+$(function(){
+    $('#srchBtn').on('click',takeInput);
+    if (typeof(Storage) !== "undefined") {
+        
+        if(localStorage.getItem('saved') == null){
+            let savedStreams = [];
+            localStorage.setItem('saved', JSON.stringify(savedStreams));
+        }else{
+        let savedStreams = [];
+        savedStreams = JSON.parse(localStorage.getItem('saved'));
+        console.log('Type is:' + typeof savedStreams);
+        
+        console.log(savedStreams);
+        savedStreams.forEach(function(name){
             fetchDataStream(name);
 
         })
-        
-    // }
+        }
+    } else {
+        alert('Your browser does not support web storage which means that you will be not be able to save your favorite streamers... :(')
+    }
 
-}
+
+})
