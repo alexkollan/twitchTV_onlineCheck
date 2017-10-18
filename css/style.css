@@ -11,9 +11,6 @@ body{
 
 }
 
-/* .mycontainer{
-    max-width: 1200px;
-} */
 
 .responseBox{
     display: flex;
@@ -24,4 +21,26 @@ body{
 .streams{
     background: #210D35;
     color: white;
+}
+.title{
+  color: white;
+
+}
+.center{
+  text-align: center;
+}
+
+.container{
+
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+  margin-top: 20px;
+  margin-bottom: 70px;
+}
+.mini-container{
+
+  width: 225px;
+  margin: 0 auto;
 }
