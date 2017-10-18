@@ -162,7 +162,7 @@ function deleteElement(element){
 }
 
 $(function(){
-    $('#srchBtn').on('click',takeInput);
+    // $('#srchBtn').on('click',takeInput);
     if (typeof(Storage) !== "undefined") {
         
         if(localStorage.getItem('saved') == null){
